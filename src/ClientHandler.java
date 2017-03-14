@@ -96,6 +96,15 @@ public class ClientHandler implements Runnable {
         servePage(pageRequest);
     }
 
+    private void applicationHeader() {
+        clientOutput.println(
+                "HTTP/1.0 200 OK\r\n" +
+                        "Content-Type: application/octet-stream"+"\r\n" +
+                        "Connection: sFile\r\n"
+        );
+        clientOutput.flush();
+    }
+
     private void textHeader(String type) {
         clientOutput.println(
                 "HTTP/1.0 200 OK\r\n" +
@@ -157,24 +166,9 @@ public class ClientHandler implements Runnable {
         }
         String extension = getExtension(fileRequested);
         extension = extension.toLowerCase();
-        switch (extension) {
-            case "ico":
-            case "gif":
-            case "jpeg":
-            case "jpg":
-            case "png":
-                imageHeader(extension);
-                break;
-            case "css":
-                textHeader(extension);
-                break;
-            case "js":
-                textHeader(extension);
-                break;
-            default:
-                /* Default, assume some form of text. */
-                textHeader(extension);
-        }
+
+                applicationHeader();
+        
 
         fileRequested = fileRequested.substring(1);
         OutputStream out;
